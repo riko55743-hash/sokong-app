@@ -1,0 +1,8 @@
+/workspaces/web-giftplease/smart-contract/target/sbf-solana-solana/release/deps/once_cell-7f3b0f96f43f21d5.d: /home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/lib.rs /home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/race.rs
+
+/workspaces/web-giftplease/smart-contract/target/sbf-solana-solana/release/deps/libonce_cell-7f3b0f96f43f21d5.rlib: /home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/lib.rs /home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/race.rs
+
+/workspaces/web-giftplease/smart-contract/target/sbf-solana-solana/release/deps/libonce_cell-7f3b0f96f43f21d5.rmeta: /home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/lib.rs /home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/race.rs
+
+/home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/lib.rs:
+/home/codespace/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/once_cell-1.21.4/src/race.rs:

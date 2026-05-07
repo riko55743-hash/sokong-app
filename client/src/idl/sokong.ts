@@ -1,0 +1,165 @@
+export type Sokong = {
+  address: "9cv9sfA8deekA3Va35Y2dMygCaP1TJZTp6FeEx65Gz7r",
+  version: "0.1.0",
+  name: "sokong",
+  instructions: [
+    {
+      name: "initialize",
+      discriminator: [175, 175, 109, 31, 13, 152, 155, 237],
+      accounts: [
+        { name: "donationState", writable: true, signer: false },
+        { name: "user", writable: true, signer: true },
+        { name: "systemProgram", writable: false, signer: false }
+      ],
+      args: []
+    },
+    {
+      name: "donateAndMint",
+      discriminator: [64, 146, 191, 157, 252, 135, 82, 187],
+      accounts: [
+        { name: "donor", writable: true, signer: true },
+        { name: "creator", writable: true, signer: false },
+        { name: "donationState", writable: true, signer: false },
+        { name: "mint", writable: true, signer: true },
+        { name: "tokenAccount", writable: true, signer: false },
+        { name: "metadataAccount", writable: true, signer: false },
+        { name: "masterEditionAccount", writable: true, signer: false },
+        { name: "tokenProgram", writable: false, signer: false },
+        { name: "associatedTokenProgram", writable: false, signer: false },
+        { name: "tokenMetadataProgram", writable: false, signer: false },
+        { name: "systemProgram", writable: false, signer: false },
+        { name: "rent", writable: false, signer: false },
+        { name: "clock", writable: false, signer: false },
+        { name: "donationRecord", writable: true, signer: false }
+      ],
+      args: [
+        { name: "amount", type: "u64" },
+        { name: "message", type: "string" }
+      ]
+    }
+  ],
+  accounts: [
+    {
+      name: "DonationState",
+      discriminator: [30, 5, 144, 92, 87, 63, 208, 230]
+    },
+    {
+      name: "DonationRecord",
+      discriminator: [4, 4, 4, 4, 4, 4, 4, 4]
+    }
+  ],
+  types: [
+    {
+      name: "DonationState",
+      type: {
+        kind: "struct",
+        fields: [
+          { name: "supporterNumber", type: "u64" }
+        ]
+      }
+    },
+    {
+      name: "DonationRecord",
+      type: {
+        kind: "struct",
+        fields: [
+          { name: "supporterNumber", type: "u64" },
+          { name: "donor", type: "publicKey" },
+          { name: "message", type: "string" },
+          { name: "timestamp", type: "i64" }
+        ]
+      }
+    }
+  ],
+  errors: [
+    {
+      code: 6000,
+      name: "MessageTooLong",
+      msg: "The custom message cannot exceed 200 characters."
+    }
+  ]
+}
+;
+
+export const IDL: Sokong = {
+  "address": "9cv9sfA8deekA3Va35Y2dMygCaP1TJZTp6FeEx65Gz7r",
+  "version": "0.1.0",
+  "name": "sokong",
+  "instructions": [
+    {
+      "name": "initialize",
+      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "accounts": [
+        { "name": "donationState", "writable": true, "signer": false },
+        { "name": "user", "writable": true, "signer": true },
+        { "name": "systemProgram", "writable": false, "signer": false }
+      ],
+      "args": []
+    },
+    {
+      "name": "donateAndMint",
+      "discriminator": [64, 146, 191, 157, 252, 135, 82, 187],
+      "accounts": [
+        { "name": "donor", "writable": true, "signer": true },
+        { "name": "creator", "writable": true, "signer": false },
+        { "name": "donationState", "writable": true, "signer": false },
+        { "name": "mint", "writable": true, "signer": true },
+        { "name": "tokenAccount", "writable": true, "signer": false },
+        { "name": "metadataAccount", "writable": true, "signer": false },
+        { "name": "masterEditionAccount", "writable": true, "signer": false },
+        { "name": "tokenProgram", "writable": false, "signer": false },
+        { "name": "associatedTokenProgram", "writable": false, "signer": false },
+        { "name": "tokenMetadataProgram", "writable": false, "signer": false },
+        { "name": "systemProgram", "writable": false, "signer": false },
+        { "name": "rent", "writable": false, "signer": false },
+        { "name": "clock", "writable": false, "signer": false },
+        { "name": "donationRecord", "writable": true, "signer": false }
+      ],
+      "args": [
+        { "name": "amount", "type": "u64" },
+        { "name": "message", "type": "string" }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "DonationState",
+      "discriminator": [30, 5, 144, 92, 87, 63, 208, 230]
+    },
+    {
+      "name": "DonationRecord",
+      "discriminator": [4, 4, 4, 4, 4, 4, 4, 4]
+    }
+  ],
+  "types": [
+    {
+      "name": "DonationState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "supporterNumber", "type": "u64" }
+        ]
+      }
+    },
+    {
+      "name": "DonationRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "supporterNumber", "type": "u64" },
+          { "name": "donor", "type": "pubkey" },
+          { "name": "message", "type": "string" },
+          { "name": "timestamp", "type": "i64" }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "MessageTooLong",
+      "msg": "The custom message cannot exceed 200 characters."
+    }
+  ]
+}
+;

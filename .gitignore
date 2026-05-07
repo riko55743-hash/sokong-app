@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# environment
+.env
+.env.*
+
+# smart contract (Hardhat)
+smart-contract/artifacts/
+smart-contract/cache/
+smart-contract/typechain/
+
+# frontend build
+client/dist/
+client/build/
+
+# logs
+*.log
+
+# system files
+.DS_Store
+Thumbs.db
+
+"dist/"
+
+# IDE
+.vscode/
+.idea/smart-contract/target/
+solana-release/
+solana-release-x86_64-unknown-linux-gnu.tar.bz2
