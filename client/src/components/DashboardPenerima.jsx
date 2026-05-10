@@ -23,6 +23,7 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
     const [campaigns, setCampaigns] = useState(Array.isArray(user?.campaigns) ? user.campaigns : []);
     const [showForm, setShowForm] = useState(false);
     const [activeTab, setActiveTab] = useState('campaigns');
+    const [deleteModalId, setDeleteModalId] = useState(null);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -65,6 +66,15 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
             checkInit();
         }
     }, [connected, connection, wallet]);
+
+    useEffect(() => {
+        setProfileData({
+            username: user?.username || '',
+            name: user?.name || user?.username || '',
+            email: user?.email || '',
+            photoUrl: user?.photoUrl || '',
+        });
+    }, [user]);
 
     const handleInitialize = async () => {
         if (!connected) return toast.error("Please connect wallet first!");
@@ -124,10 +134,16 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
     };
 
     const handleDeleteCampaign = (id) => {
-        if (window.confirm('Hapus campaign ini?')) {
-            const updated = campaigns.filter(c => c.id !== id);
+        setDeleteModalId(id);
+    };
+
+    const confirmDeleteCampaign = () => {
+        if (deleteModalId) {
+            const updated = campaigns.filter(c => c.id !== deleteModalId);
             setCampaigns(updated);
             updateProfile({ campaigns: updated });
+            setDeleteModalId(null);
+            toast.success('Campaign berhasil dihapus!');
         }
     };
 
@@ -136,12 +152,18 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
         setProfileData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSaveProfile = () => {
+    const handleSaveProfile = async () => {
         if (!profileData.username || profileData.username.trim() === '') {
             return toast.error("Username tidak boleh kosong.");
         }
         try {
-            updateProfile({ username: profileData.username.trim(), name: profileData.name, email: profileData.email, photoUrl: profileData.photoUrl });
+            await updateProfile({ username: profileData.username.trim(), name: profileData.name, email: profileData.email, photoUrl: profileData.photoUrl });
+            setProfileData({
+                username: profileData.username.trim(),
+                name: profileData.name,
+                email: profileData.email,
+                photoUrl: profileData.photoUrl,
+            });
             setIsEditingProfile(false);
             toast.success('Profil berhasil disimpan!');
         } catch (error) {
@@ -167,7 +189,10 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                     <span className="dp-role-badge"><FontAwesomeIcon icon={faHandshakeAngle} /> Creator</span>
                 </div>
                 <div className="dp-header-right">
-                    <span className="dp-username"><FontAwesomeIcon icon={faUsers} /> @{user?.username}</span>
+                    <div className="dp-user-info">
+                        <div className="dp-user-name">{user?.name || 'Creator'}</div>
+                        <div className="dp-user-handle">@{user?.username}</div>
+                    </div>
                     <SokongWalletButton style={{ background: 'var(--sol-purple)' }} />
                     <button onClick={onSwitchRole} className="dp-btn-switch">Switch Role</button>
                     <button onClick={handleLogout} className="dp-btn-logout">Logout</button>
@@ -313,7 +338,7 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                                     </div>
                                 )}
 
-                                {campaigns.length === 0 ? (
+                                {campaigns.length === 0 && !showForm ? (
                                     <div className="dp-empty glass">
                                         <div className="dp-empty-icon"><FontAwesomeIcon icon={faMicrophone} /></div>
                                         <h3>Belum ada campaign</h3>
@@ -398,17 +423,17 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                                 <div className="dp-profile-card glass">
                                     <div className="dp-profile-fields">
                                         <div className="dp-form-group">
-                                            <label>Username (Unik) <span style={{ color: '#ff4757' }}>*</span></label>
-                                            {isEditingProfile ? (
-                                                <input type="text" name="username" value={profileData.username} onChange={handleProfileInputChange} placeholder="username_unik" required />
-                                            ) : (<p className="dp-profile-value">@{profileData.username}</p>)}
-                                        </div>
-
-                                        <div className="dp-form-group">
                                             <label>Nama / Display Name</label>
                                             {isEditingProfile ? (
                                                 <input type="text" name="name" value={profileData.name} onChange={handleProfileInputChange} placeholder="Nama tayangan kamu..." />
                                             ) : (<p className="dp-profile-value">{profileData.name || '-'}</p>)}
+                                        </div>
+
+                                        <div className="dp-form-group">
+                                            <label>Username (Unik) <span style={{ color: '#ff4757' }}>*</span></label>
+                                            {isEditingProfile ? (
+                                                <input type="text" name="username" value={profileData.username} onChange={handleProfileInputChange} placeholder="username_unik" required />
+                                            ) : (<p className="dp-profile-value">@{profileData.username}</p>)}
                                         </div>
 
                                         <div className="dp-form-group">
@@ -433,6 +458,24 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                     </>
                 )}
             </main>
+
+            {deleteModalId && (
+                <div className="dp-modal-overlay" onClick={() => setDeleteModalId(null)}>
+                    <div className="dp-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="dp-modal-header">
+                            <h2>Hapus Campaign</h2>
+                            <button className="dp-modal-close" onClick={() => setDeleteModalId(null)}><FontAwesomeIcon icon={faTimes} /></button>
+                        </div>
+                        <div className="dp-modal-body">
+                            <p>Apakah Anda yakin ingin menghapus campaign ini? Tindakan ini tidak dapat dibatalkan.</p>
+                        </div>
+                        <div className="dp-modal-actions">
+                            <button className="dp-modal-btn-cancel" onClick={() => setDeleteModalId(null)}>Batal</button>
+                            <button className="dp-modal-btn-delete" onClick={confirmDeleteCampaign}>Hapus Campaign</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

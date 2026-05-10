@@ -14,17 +14,19 @@
     z-index: 100;
 }
 .dp-header-left { display: flex; align-items: center; gap: 1rem; }
-.dp-header-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.dp-header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .dp-logo { font-size: 1.5rem; font-weight: 800; }
 .dp-role-badge { font-size: 0.8rem; color: rgba(255,255,255,0.5); background: rgba(153,69,255,0.1); border: 1px solid rgba(153,69,255,0.3); padding: 4px 12px; border-radius: 20px; }
-.dp-username { font-size: 0.9rem; color: rgba(255,255,255,0.8); }
+.dp-user-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: fit-content; }
+.dp-user-name { font-size: 0.95rem; font-weight: 600; color: #fff; line-height: 1; }
+.dp-user-handle { font-size: 0.75rem; color: rgba(255,255,255,0.5); line-height: 1; }
 .dp-btn-logout { background: rgba(255,69,69,0.15); color: #ff6b6b; border: 1px solid rgba(255,69,69,0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-family: 'Inter', sans-serif; transition: all 0.2s; }
 .dp-btn-logout:hover { background: rgba(255,69,69,0.25); }
 .dp-btn-switch { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-family: 'Inter', sans-serif; transition: all 0.2s; }
 .dp-btn-switch:hover { background: rgba(255,255,255,0.1); }
 
 /* Main */
-.dp-main { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.dp-main { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; overflow: visible; }
 
 /* Stats */
 .dp-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 900px; margin: 0 auto; }
@@ -43,16 +45,17 @@
 .dp-tab.active { color: #fff; border-bottom-color: var(--sol-purple); }
 
 /* Section */
-.dp-section { display: flex; flex-direction: column; gap: 1rem; }
+.dp-section { display: flex; flex-direction: column; gap: 1rem; position: relative; }
 .dp-section-header { display: flex; align-items: center; justify-content: space-between; }
 .dp-section-header h2 { margin: 0; font-size: 1.2rem; font-weight: 600; }
 .dp-badge { background: rgba(153,69,255,0.2); color: var(--sol-purple); border: 1px solid rgba(153,69,255,0.3); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
 
 /* Form */
-.dp-form-card { padding: 1.5rem; }
+.dp-form-card { padding: 1.5rem; overflow: visible; }
+.searchable-dropdown { overflow: visible; }
 .dp-form-card h3 { margin: 0 0 1.25rem; font-size: 1rem; }
-.dp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.dp-form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+.dp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; overflow: visible; }
+.dp-form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; overflow: visible; }
 .dp-form-group label { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
 .dp-form-group select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; cursor: pointer; }
 .dp-form-group select:focus { border-color: var(--sol-purple); }
@@ -214,4 +217,127 @@
     .dp-form-row { grid-template-columns: 1fr; }
     .dp-campaigns-grid { grid-template-columns: 1fr; }
     .dp-profile-card { flex-direction: column; text-align: center; }
+}
+
+/* Delete Modal */
+.dp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.dp-modal-content {
+    background: linear-gradient(145deg, rgba(20, 20, 30, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(153, 69, 255, 0.15);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dp-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.dp-modal-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.dp-modal-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.dp-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.dp-modal-body {
+    margin-bottom: 2rem;
+}
+
+.dp-modal-body p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.dp-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.dp-modal-btn-cancel {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.dp-modal-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dp-modal-btn-delete {
+    flex: 1;
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff6b6b;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.dp-modal-btn-delete:hover {
+    background: rgba(255, 68, 68, 0.35);
+    border-color: rgba(255, 68, 68, 0.5);
 }

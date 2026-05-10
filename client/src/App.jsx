@@ -12,17 +12,20 @@ import "./App.css";
 const CompleteProfile = React.memo(({ frozenKey }) => {
   const auth = useAuth();
   const usernameRef = useRef(null);
+  const displayNameRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const username = usernameRef.current?.value;
+    const displayName = displayNameRef.current?.value;
     if (!username || !username.trim()) return toast.error("Username tidak boleh kosong.");
+    if (!displayName || !displayName.trim()) return toast.error("Display name tidak boleh kosong.");
 
     try {
       setLoading(true);
       if (auth && auth.registerWithWallet && frozenKey) {
-        await auth.registerWithWallet(username.trim(), frozenKey);
+        await auth.registerWithWallet(username.trim(), displayName.trim(), frozenKey);
         toast.success("Akun berhasil dibuat!");
       }
     } catch (error) {
@@ -36,7 +39,7 @@ const CompleteProfile = React.memo(({ frozenKey }) => {
     <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
       <div className="glass" style={{ padding: '3rem', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
         <h2 style={{ marginBottom: '1rem' }}>Selesaikan Profil</h2>
-        <p style={{ color: '#aaa', marginBottom: '2rem' }}>Pilih username unik untuk akun Web3 kamu.</p>
+        <p style={{ color: '#aaa', marginBottom: '2rem' }}>Pilih username dan display name untuk akun Web3 kamu.</p>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ position: 'relative' }}>
             <input
@@ -45,6 +48,17 @@ const CompleteProfile = React.memo(({ frozenKey }) => {
               autoComplete="off"
               placeholder="Username_unik"
               ref={usernameRef}
+              style={{ padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '1.1rem', width: '100%', boxSizing: 'border-box' }}
+              required
+            />
+          </div>
+          <div style={{ position: 'relative' }}>
+            <input
+              type="text"
+              name="sokong_display_name_reg"
+              autoComplete="off"
+              placeholder="Display Name"
+              ref={displayNameRef}
               style={{ padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '1.1rem', width: '100%', boxSizing: 'border-box' }}
               required
             />
