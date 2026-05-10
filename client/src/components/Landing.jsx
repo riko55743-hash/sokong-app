@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { SokongWalletButton } from './SokongWalletButton';
 
 export const Landing = ({ onEnter }) => {
-    const { connected } = useWallet();
+    const { publicKey } = useWallet();
 
-    React.useEffect(() => {
-        if (connected) {
+    useEffect(() => {
+        if (publicKey) {
             onEnter('connected');
         }
-    }, [connected, onEnter]);
+    }, [publicKey, onEnter]);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: '600px', margin: '0 auto', gap: '2rem' }}>
@@ -23,7 +24,7 @@ export const Landing = ({ onEnter }) => {
             </div>
 
             <div className="glass" style={{ padding: '2.5rem', width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center' }}>
-                <WalletMultiButton style={{ width: '100%', justifyContent: 'center', background: 'var(--sol-purple)' }} />
+                <SokongWalletButton style={{ width: '100%', justifyContent: 'center', background: 'var(--sol-purple)' }} />
             </div>
         </div>
     );

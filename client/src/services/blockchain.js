@@ -24,7 +24,7 @@ export const initializeState = async (program) => {
             [Buffer.from("donation_state")],
             program.programId
         );
-        
+
         // The connected wallet (user) is automatically passed as the authorized Payer and Signer by the Anchor Provider
         const tx = await program.methods
             .initialize()
@@ -59,7 +59,7 @@ export const fetchTimeCapsules = async (program) => {
         const records = await program.account.donationRecord.all();
         // Sort by timestamp descending (newest first)
         records.sort((a, b) => b.account.timestamp.toNumber() - a.account.timestamp.toNumber());
-        
+
         return records.map(r => ({
             supporterNumber: r.account.supporterNumber.toNumber(),
             donor: r.account.donor.toString(),
@@ -72,12 +72,12 @@ export const fetchTimeCapsules = async (program) => {
     }
 };
 
-export const sendSokongDonation = async (program, amountSol, message) => {
+export const sendSokongDonation = async (program, amountSol, message, creatorAddress) => {
     try {
         const donor = program.provider.wallet.publicKey;
-        const creator = new web3.PublicKey(CREATOR_VAULT_ADDRESS);
+        const creator = new web3.PublicKey(creatorAddress || CREATOR_VAULT_ADDRESS);
         const mint = web3.Keypair.generate();
-        
+
         const [donationStatePda] = web3.PublicKey.findProgramAddressSync(
             [Buffer.from("donation_state")],
             program.programId
