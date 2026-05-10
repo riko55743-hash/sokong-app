@@ -23,6 +23,7 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
     const [campaigns, setCampaigns] = useState(Array.isArray(user?.campaigns) ? user.campaigns : []);
     const [showForm, setShowForm] = useState(false);
     const [activeTab, setActiveTab] = useState('campaigns');
+    const [campaignToDelete, setCampaignToDelete] = useState(null);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -124,10 +125,16 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
     };
 
     const handleDeleteCampaign = (id) => {
-        if (window.confirm('Hapus campaign ini?')) {
-            const updated = campaigns.filter(c => c.id !== id);
+        setCampaignToDelete(id);
+    };
+
+    const confirmDelete = () => {
+        if (campaignToDelete) {
+            const updated = campaigns.filter(c => c.id !== campaignToDelete);
             setCampaigns(updated);
             updateProfile({ campaigns: updated });
+            setCampaignToDelete(null);
+            toast.success('Campaign dihapus!');
         }
     };
 
@@ -240,6 +247,19 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                                         {showForm ? <><FontAwesomeIcon icon={faTimes} /> Batal</> : <>+ Buat Campaign</>}
                                     </button>
                                 </div>
+
+                                {campaignToDelete && (
+                                    <div className="custom-modal-overlay">
+                                        <div className="custom-modal glass" style={{ borderColor: 'rgba(255, 68, 68, 0.3)' }}>
+                                            <h3><FontAwesomeIcon icon={faExclamationTriangle} style={{color: '#ff4757'}} /> Hapus Campaign</h3>
+                                            <p>Apakah Anda yakin ingin menghapus campaign ini? Semua data tidak dapat dikembalikan.</p>
+                                            <div className="custom-modal-actions">
+                                                <button className="dp-btn-cancel" onClick={() => setCampaignToDelete(null)}>Batal</button>
+                                                <button className="btn-primary" style={{background: '#ff4757', border: 'none'}} onClick={confirmDelete}>Ya, Hapus</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {showForm && (
                                     <div className="dp-form-card glass">
