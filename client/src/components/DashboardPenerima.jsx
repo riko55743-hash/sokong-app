@@ -1,9 +1,10 @@
-// src/components/DashboardPenerima.jsx
 import { useState, useEffect } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { SokongWalletButton } from './SokongWalletButton';
 import { SearchableDropdown } from './SearchableDropdown';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../translations';
 import { getProgram, initializeState, checkIfInitialized } from '../services/blockchain';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faGift, faClipboard, faCircle, faUsers, faMicrophone, faHandshakeAngle, faExclamationTriangle, faGamepad, faTheaterMasks, faMusic, faBook, faTimes, faStar, faRocket, faStop, faTrash, faPen, faCheck, faServer } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +13,8 @@ import '../styles/DashboardPenerima.css';
 
 export const DashboardPenerima = ({ onSwitchRole }) => {
     const { user, logout, updateProfile } = useAuth();
+    const { language } = useLanguage();
+    const t = (key) => translations[language][key] || key;
     const { connected, publicKey } = useWallet();
     const wallet = useWallet();
     const { connection } = useConnection();
@@ -66,6 +69,15 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
             checkInit();
         }
     }, [connected, connection, wallet]);
+
+    useEffect(() => {
+        setProfileData({
+            username: user?.username || '',
+            name: user?.name || user?.username || '',
+            email: user?.email || '',
+            photoUrl: user?.photoUrl || '',
+        });
+    }, [user]);
 
     const handleInitialize = async () => {
         if (!connected) return toast.error("Please connect wallet first!");
@@ -134,7 +146,7 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
             setCampaigns(updated);
             updateProfile({ campaigns: updated });
             setCampaignToDelete(null);
-            toast.success('Campaign dihapus!');
+            toast.success(t('campaignDeleted') || 'Campaign dihapus!');
         }
     };
 
@@ -143,14 +155,20 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
         setProfileData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSaveProfile = () => {
+    const handleSaveProfile = async () => {
         if (!profileData.username || profileData.username.trim() === '') {
             return toast.error("Username tidak boleh kosong.");
         }
         try {
-            updateProfile({ username: profileData.username.trim(), name: profileData.name, email: profileData.email, photoUrl: profileData.photoUrl });
+            await updateProfile({ username: profileData.username.trim(), name: profileData.name, email: profileData.email, photoUrl: profileData.photoUrl });
+            setProfileData({
+                username: profileData.username.trim(),
+                name: profileData.name,
+                email: profileData.email,
+                photoUrl: profileData.photoUrl,
+            });
             setIsEditingProfile(false);
-            toast.success('Profil berhasil disimpan!');
+            toast.success(t('profileSaved') || 'Profil berhasil disimpan!');
         } catch (error) {
             toast.error(error.message);
         }
@@ -171,13 +189,16 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
             <header className="dp-header glass">
                 <div className="dp-header-left">
                     <div className="dp-logo"><span className="text-gradient">Sokong</span></div>
-                    <span className="dp-role-badge"><FontAwesomeIcon icon={faHandshakeAngle} /> Creator</span>
+                    <span className="dp-role-badge"><FontAwesomeIcon icon={faHandshakeAngle} /> {t('creator')}</span>
                 </div>
                 <div className="dp-header-right">
-                    <span className="dp-username"><FontAwesomeIcon icon={faUsers} /> @{user?.username}</span>
+                    <div className="dp-user-info">
+                        <div className="dp-user-name">{user?.name || 'Creator'}</div>
+                        <div className="dp-user-handle">@{user?.username}</div>
+                    </div>
                     <SokongWalletButton style={{ background: 'var(--sol-purple)' }} />
-                    <button onClick={onSwitchRole} className="dp-btn-switch">Switch Role</button>
-                    <button onClick={handleLogout} className="dp-btn-logout">Logout</button>
+                    <button onClick={onSwitchRole} className="dp-btn-switch"> {t('switchRole')}</button>
+                    <button onClick={handleLogout} className="dp-btn-logout"> {t('logout')}</button>
                 </div>
             </header>
 
@@ -185,8 +206,8 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                 {!connected ? (
                     <div className="dp-wallet-warning glass" style={{ textAlign: 'center', padding: '40px' }}>
                         <FontAwesomeIcon icon={faExclamationTriangle} size="3x" style={{ color: 'var(--sol-green)', marginBottom: '20px' }} />
-                        <h2>Akses Diblokir</h2>
-                        <p style={{ marginBottom: '20px' }}>Silakan hubungkan Wallet Phantom Anda untuk mengakses Dashboard Creator.</p>
+                        <h2>{t('accessDenied')}</h2>
+                        <p style={{ marginBottom: '20px' }}>{t('connectWalletFirst')}</p>
                         <SokongWalletButton style={{ background: 'var(--sol-purple)', margin: '0 auto' }} />
                     </div>
                 ) : (
@@ -211,21 +232,21 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                             <div className="dp-stat-card glass">
                                 <span className="dp-stat-icon"><FontAwesomeIcon icon={faCoins} /></span>
                                 <div>
-                                    <p className="dp-stat-label">Total Terkumpul</p>
+                                    <p className="dp-stat-label">{t('totalRaised')}</p>
                                     <p className="dp-stat-value text-gradient">{totalRaised.toFixed(2)} SOL</p>
                                 </div>
                             </div>
                             <div className="dp-stat-card glass">
                                 <span className="dp-stat-icon"><FontAwesomeIcon icon={faGift} /></span>
                                 <div>
-                                    <p className="dp-stat-label">Total Supporter</p>
+                                    <p className="dp-stat-label">{t('totalDonors')}</p>
                                     <p className="dp-stat-value">{totalDonors}</p>
                                 </div>
                             </div>
                             <div className="dp-stat-card glass">
                                 <span className="dp-stat-icon"><FontAwesomeIcon icon={faClipboard} /></span>
                                 <div>
-                                    <p className="dp-stat-label">Campaign Aktif</p>
+                                    <p className="dp-stat-label">{t('totalCampaigns')}</p>
                                     <p className="dp-stat-value">{totalCampaigns}</p>
                                 </div>
                             </div>
@@ -233,29 +254,29 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
 
                         {/* Tabs */}
                         <div className="dp-tabs">
-                            <button className={`dp-tab ${activeTab === 'campaigns' ? 'active' : ''}`} onClick={() => setActiveTab('campaigns')}><FontAwesomeIcon icon={faClipboard} /> Campaign Saya</button>
-                            <button className={`dp-tab ${activeTab === 'donations' ? 'active' : ''}`} onClick={() => setActiveTab('donations')}><FontAwesomeIcon icon={faGift} /> Donasi Masuk</button>
-                            <button className={`dp-tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>⚙️ Profil Saya</button>
+                            <button className={`dp-tab ${activeTab === 'campaigns' ? 'active' : ''}`} onClick={() => setActiveTab('campaigns')}><FontAwesomeIcon icon={faClipboard} /> {t('campaigns')}</button>
+                            <button className={`dp-tab ${activeTab === 'donations' ? 'active' : ''}`} onClick={() => setActiveTab('donations')}><FontAwesomeIcon icon={faGift} /> {t('donations')}</button>
+                            <button className={`dp-tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>⚙️ {t('profile')}</button>
                         </div>
 
                         {/* Tab: Campaigns */}
                         {activeTab === 'campaigns' && (
                             <div className="dp-section">
                                 <div className="dp-section-header">
-                                    <h2>Campaign Saya</h2>
+                                    <h2>{t('campaigns')}</h2>
                                     <button onClick={() => setShowForm(!showForm)} className="btn-primary">
-                                        {showForm ? <><FontAwesomeIcon icon={faTimes} /> Batal</> : <>+ Buat Campaign</>}
+                                        {showForm ? <><FontAwesomeIcon icon={faTimes} /> {t('cancel')}</> : <>+ {t('createCampaign')}</>}
                                     </button>
                                 </div>
 
                                 {campaignToDelete && (
                                     <div className="custom-modal-overlay">
                                         <div className="custom-modal glass" style={{ borderColor: 'rgba(255, 68, 68, 0.3)' }}>
-                                            <h3><FontAwesomeIcon icon={faExclamationTriangle} style={{color: '#ff4757'}} /> Hapus Campaign</h3>
-                                            <p>Apakah Anda yakin ingin menghapus campaign ini? Semua data tidak dapat dikembalikan.</p>
+                                            <h3><FontAwesomeIcon icon={faExclamationTriangle} style={{color: '#ff4757'}} /> {t('delete')} Campaign</h3>
+                                            <p>{t('deleteCampaignConfirm') || 'Apakah Anda yakin ingin menghapus campaign ini? Semua data tidak dapat dikembalikan.'}</p>
                                             <div className="custom-modal-actions">
-                                                <button className="dp-btn-cancel" onClick={() => setCampaignToDelete(null)}>Batal</button>
-                                                <button className="btn-primary" style={{background: '#ff4757', border: 'none'}} onClick={confirmDelete}>Ya, Hapus</button>
+                                                <button className="dp-btn-cancel" onClick={() => setCampaignToDelete(null)}>{t('cancel') || 'Batal'}</button>
+                                                <button className="btn-primary" style={{background: '#ff4757', border: 'none'}} onClick={confirmDelete}>{t('delete') || 'Hapus'}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -263,15 +284,15 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
 
                                 {showForm && (
                                     <div className="dp-form-card glass">
-                                        <h3><FontAwesomeIcon icon={faStar} /> Campaign Baru</h3>
+                                        <h3><FontAwesomeIcon icon={faStar} /> New Campaign</h3>
                                         <form onSubmit={handleCreateCampaign}>
                                             <div className="dp-form-row">
                                                 <div className="dp-form-group">
-                                                    <label>Judul Campaign</label>
+                                                    <label>{t('campaignTitle')}</label>
                                                     <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="Donasi untuk stream saya..." required />
                                                 </div>
                                                 <div className="dp-form-group">
-                                                    <label>Platform</label>
+                                                    <label>{t('platform')}</label>
                                                     <SearchableDropdown
                                                         name="platform"
                                                         options={['Blinks', 'X (Twitter)', 'YouTube', 'Twitch', 'TikTok', 'Instagram', 'Farcaster', 'Lens', 'Other']}
@@ -294,17 +315,17 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                                             </div>
 
                                             <div className="dp-form-group">
-                                                <label>Deskripsi</label>
+                                                <label>{t('campaignDescription')}</label>
                                                 <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Ceritakan tentang stream kamu..." rows="4" required />
                                             </div>
 
                                             <div className="dp-form-row">
                                                 <div className="dp-form-group">
-                                                    <label>Target Donasi (SOL)</label>
+                                                    <label>{t('targetAmount')} </label>
                                                     <input type="number" name="targetAmount" value={formData.targetAmount} onChange={handleInputChange} placeholder="5.0" step="0.1" min="0.1" required />
                                                 </div>
                                                 <div className="dp-form-group">
-                                                    <label>Kategori</label>
+                                                    <label>{t('category')}</label>
                                                     <SearchableDropdown
                                                         name="category"
                                                         options={['DeFi', 'GameFi', 'RWA (Real World Assets)', 'Consumer Apps', 'Infrastructure', 'NFT/Digital Collectibles', 'DAOs', 'Gaming', 'Variety', 'Musik', 'Edukasi', 'Other']}
@@ -327,18 +348,18 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                                             </div>
 
                                             <button type="submit" className="btn-primary" style={{ width: '100%', padding: '13px' }}>
-                                                <FontAwesomeIcon icon={faRocket} /> Buat Campaign
+                                                <FontAwesomeIcon icon={faRocket} /> {t('createCampaign')}
                                             </button>
                                         </form>
                                     </div>
                                 )}
 
-                                {campaigns.length === 0 ? (
+                                {campaigns.length === 0 && !showForm ? (
                                     <div className="dp-empty glass">
                                         <div className="dp-empty-icon"><FontAwesomeIcon icon={faMicrophone} /></div>
-                                        <h3>Belum ada campaign</h3>
-                                        <p>Buat campaign pertamamu dan mulai terima donasi dari para patron!</p>
-                                        <button onClick={() => setShowForm(true)} className="btn-primary">+ Buat Campaign Sekarang</button>
+                                        <h3>{t('noCampaigns')}</h3>
+                                        <p>{t('noCampaignsDesc')}</p>
+                                        <button onClick={() => setShowForm(true)} className="btn-primary">+ {t('createCampaign')}</button>
                                     </div>
                                 ) : (
                                     <div className="dp-campaigns-grid">
@@ -381,14 +402,14 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                         {activeTab === 'donations' && (
                             <div className="dp-section">
                                 <div className="dp-section-header">
-                                    <h2>Donasi Masuk</h2>
+                                    <h2>{t('donations')}</h2>
                                 </div>
                                 <div className="dp-donations-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                     {donations.length === 0 ? (
                                         <div className="dp-empty glass">
                                             <div className="dp-empty-icon"><FontAwesomeIcon icon={faGift} /></div>
-                                            <h3>Belum ada donasi</h3>
-                                            <p>Campaign kamu belum menerima dukungan. Bagikan link stream kamu!</p>
+                                            <h3>{t('noDonations')}</h3>
+                                            <p>{t('noDonationsDesc')}</p>
                                         </div>
                                     ) : donations.map(d => (
                                         <div key={d.id} className="dp-donation-item glass" style={{ display: 'flex', alignItems: 'flex-start', padding: '1rem 1.2rem', borderRadius: '12px', gap: '1rem', background: 'linear-gradient(145deg, rgba(20,20,30,0.8) 0%, rgba(10,10,15,0.6) 100%)', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -414,18 +435,18 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                         {/* Tab: Profil */}
                         {activeTab === 'profile' && (
                             <div className="dp-section">
-                                <div className="dp-section-header"><h2>Profil Saya</h2></div>
+                                <div className="dp-section-header"><h2>{t('profile')}</h2></div>
                                 <div className="dp-profile-card glass">
                                     <div className="dp-profile-fields">
                                         <div className="dp-form-group">
-                                            <label>Username (Unik) <span style={{ color: '#ff4757' }}>*</span></label>
+                                            <label>{t('username')}<span style={{ color: '#ff4757' }}>*</span></label>
                                             {isEditingProfile ? (
                                                 <input type="text" name="username" value={profileData.username} onChange={handleProfileInputChange} placeholder="username_unik" required />
                                             ) : (<p className="dp-profile-value">@{profileData.username}</p>)}
                                         </div>
 
                                         <div className="dp-form-group">
-                                            <label>Nama / Display Name</label>
+                                            <label>{t('displayName')}</label>
                                             {isEditingProfile ? (
                                                 <input type="text" name="name" value={profileData.name} onChange={handleProfileInputChange} placeholder="Nama tayangan kamu..." />
                                             ) : (<p className="dp-profile-value">{profileData.name || '-'}</p>)}
@@ -439,11 +460,11 @@ export const DashboardPenerima = ({ onSwitchRole }) => {
                                         <div className="dp-profile-actions">
                                             {isEditingProfile ? (
                                                 <>
-                                                    <button className="btn-primary" onClick={handleSaveProfile}><FontAwesomeIcon icon={faCheck} /> Simpan</button>
-                                                    <button className="dp-btn-cancel" onClick={() => setIsEditingProfile(false)}><FontAwesomeIcon icon={faTimes} /> Batal</button>
+                                                    <button className="btn-primary" onClick={handleSaveProfile}><FontAwesomeIcon icon={faCheck} /> {t('save')}</button>
+                                                    <button className="dp-btn-cancel" onClick={() => setIsEditingProfile(false)}><FontAwesomeIcon icon={faTimes} /> {t('cancel')}</button>
                                                 </>
                                             ) : (
-                                                <button className="btn-primary" onClick={() => setIsEditingProfile(true)}><FontAwesomeIcon icon={faPen} /> Edit Profil</button>
+                                                <button className="btn-primary" onClick={() => setIsEditingProfile(true)}><FontAwesomeIcon icon={faPen} /> {t('editProfile')}</button>
                                             )}
                                         </div>
                                     </div>

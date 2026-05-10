@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
         return false;
     };
 
-    const registerWithWallet = async (username, publicKeyStr) => {
+    const registerWithWallet = async (username, displayName, publicKeyStr) => {
         const registry = getUsersRegistry();
         const isDuplicate = registry.some(u => u.username.toLowerCase() === username.toLowerCase());
 
@@ -53,6 +53,7 @@ export function AuthProvider({ children }) {
         const newUser = {
             id: Date.now(),
             username,
+            displayName,
             walletAddress: publicKeyStr,
             createdAt: new Date().toISOString()
         };

@@ -1,0 +1,57 @@
+.language-toggle {
+  position: fixed;
+  top: 110px; /* ← sesuaikan dengan tinggi navbar Anda */
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px)
+}
+
+.language-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.language-toggle:active {
+  transform: translateY(0);
+}
+
+.language-icon {
+  font-size: 1.1rem;
+}
+
+.language-text {
+  min-width: 30px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .language-toggle {
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .language-text {
+    display: none;
+  }
+
+  .language-icon {
+    font-size: 1rem;
+  }
+}

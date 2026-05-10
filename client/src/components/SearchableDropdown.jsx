@@ -26,7 +26,7 @@ export const SearchableDropdown = ({ name, options, value, onChange, placeholder
     };
 
     return (
-        <div className="searchable-dropdown" ref={dropdownRef} style={{ position: 'relative' }}>
+        <div className="searchable-dropdown" ref={dropdownRef} style={{ position: 'relative', overflow: 'visible' }}>
             <div 
                 className="dropdown-header" 
                 onClick={() => setIsOpen(!isOpen)}
@@ -41,11 +41,16 @@ export const SearchableDropdown = ({ name, options, value, onChange, placeholder
             </div>
 
             {isOpen && (
-                <div className="dropdown-menu glass" style={{ 
-                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100, 
-                    marginTop: '4px', padding: '8px', maxHeight: '250px', display: 'flex', flexDirection: 'column',
+                <div className="dropdown-menu glass" style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 9999,
+                    marginTop: '4px', padding: '8px', display: 'flex', flexDirection: 'column',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-                    backgroundColor: '#121215'
+                    backgroundColor: '#121215', overflow: 'visible',
+                    background: 'rgba(18, 18, 21, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px'
                 }}>
                     <div style={{ position: 'relative', marginBottom: '8px' }}>
                         <FontAwesomeIcon icon={faSearch} style={{ position: 'absolute', left: '10px', top: '12px', color: '#aaa', fontSize: '0.9rem' }} />
@@ -58,7 +63,7 @@ export const SearchableDropdown = ({ name, options, value, onChange, placeholder
                             style={{ paddingLeft: '32px', marginBottom: 0, width: '100%' }}
                         />
                     </div>
-                    <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ overflowY: 'auto', maxHeight: '250px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         {filteredOptions.length > 0 ? filteredOptions.map((opt, idx) => (
                             <div 
                                 key={idx} 
