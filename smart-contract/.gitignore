@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Environment files (IMPORTANT)
+.env
+.env.*
+!.env.example
+
+# Hardhat build artifacts
+artifacts/
+cache/
+typechain/
+types/
+
+# Coverage reports
+coverage/
+coverage.json
+
+# Gas report
+.gas-snapshot
+
+# Hardhat deploy/bundle output
+dist/
+bundle/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Snapshot cheatcodes
+snapshots/

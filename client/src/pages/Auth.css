@@ -1,0 +1,197 @@
+/* src/pages/Auth.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 16px;
+    font-family: 'Inter', sans-serif;
+    }
+
+    .auth-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 420px;
+    }
+
+    /* Logo / Header */
+    .auth-logo {
+    text-align: center;
+    margin-bottom: 28px;
+    }
+
+    .auth-logo-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--sol-purple), var(--sol-green));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+    }
+
+    .auth-logo h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--sol-green), var(--sol-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    }
+
+    .auth-brand {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-brand-text {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--sol-purple, #9945FF), #14F195);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.5px;
+    }
+
+    .auth-logo p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Section Label */
+    .auth-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    }
+
+    /* User Type Selector */
+    .user-type-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+    }
+
+    .user-type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 14px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    }
+
+    .user-type-btn:hover {
+    border-color: rgba(153, 69, 255, 0.5);
+    background: rgba(153, 69, 255, 0.1);
+    }
+
+    .user-type-btn.selected {
+    border-color: var(--sol-purple);
+    background: rgba(153, 69, 255, 0.15);
+    }
+
+    .type-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+    }
+
+    .type-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    }
+
+    .type-sub {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 3px;
+    }
+
+    /* Divider */
+    .auth-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 18px 0;
+    }
+
+    /* Form Fields */
+    .auth-card form {
+    display: flex;
+    flex-direction: column;
+    }
+
+    .auth-card label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 6px;
+    }
+
+    /* btn-primary sudah ada di App.css, tapi override untuk auth */
+    .auth-card .btn-primary {
+    background: linear-gradient(90deg, var(--sol-purple), var(--sol-green));
+    color: #fff;
+    border: none;
+    padding: 13px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .auth-card .btn-primary:hover {
+    opacity: 0.88;
+    transform: scale(1.01);
+    }
+
+    /* Switch link */
+    .auth-switch {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 18px;
+    }
+
+    .auth-switch span {
+    color: var(--sol-green);
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+    }
+
+    .auth-switch span:hover {
+    opacity: 0.8;
+    }
+
+    /* Error message */
+    .auth-error {
+    font-size: 13px;
+    color: #ff6b6b;
+    margin: -8px 0 10px;
+    text-align: center;
+}
