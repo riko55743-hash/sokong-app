@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { SokongWalletButton } from './SokongWalletButton';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../translations';
 import { getProgram, sendSokongDonation } from '../services/blockchain';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGift, faHeart, faMagnifyingGlass, faStar, faGamepad, faTheaterMasks, faMusic, faTimes, faComment, faRocket, faHandPointLeft, faUser, faUsers, faCoins, faBook, faServer, faPen, faCheck, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +12,8 @@ import '../styles/DashboardPemberi.css';
 
 export const DashboardPemberi = ({ onSwitchRole }) => {
     const { user, logout, getUsersRegistry, updateProfile } = useAuth();
+    const { language } = useLanguage();
+    const t = (key) => translations[language][key] || key;
     const { connected } = useWallet();
     const wallet = useWallet();
     const { connection } = useConnection();
@@ -66,12 +70,12 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
 
     const handleSaveProfile = () => {
         if (!profileData.username || profileData.username.trim() === '') {
-            return toast.error("Username tidak boleh kosong.");
+            return toast.error(t('usernameRequired'));
         }
         try {
             updateProfile({ username: profileData.username.trim(), name: profileData.name, email: profileData.email, photoUrl: profileData.photoUrl });
             setIsEditingProfile(false);
-            toast.success('Profil berhasil disimpan!');
+            toast.success(t('profileSaved'));
         } catch (error) {
             toast.error(error.message);
         }
@@ -86,15 +90,15 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
     const handleDonate = async (e) => {
         e.preventDefault();
         if (!connected) {
-            toast.error('Hubungkan wallet Solana kamu dulu!');
+            toast.error(t('connectWalletFirst'));
             return;
         }
         if (!donationAmount || !selectedCampaign) {
-            toast.error('Pilih campaign dan masukkan jumlah donasi!');
+            toast.error(t('fillAllFields'));
             return;
         }
         if (!selectedCampaign.creatorWallet) {
-            toast.error('Creator ini belum menghubungkan Wallet mereka, jadi belum bisa menerima donasi!');
+            toast.error(t('creatorNotConnected'));
             return;
         }
 
@@ -105,7 +109,7 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
             // Pass the dynamic creator wallet address here!
             const tx = await sendSokongDonation(program, parseFloat(donationAmount), donationMessage, selectedCampaign.creatorWallet);
 
-            toast.success(`Donasi ${donationAmount} SOL ke @${selectedCampaign.creatorUsername} berhasil!\nTX: ${tx}`);
+            toast.success(t('donationSuccess'));
 
             // Sync with Creator's Registry Profile
             const registry = getUsersRegistry();
@@ -158,11 +162,11 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
             console.error(err);
             const errorMsg = err.message ? err.message.toLowerCase() : '';
             if (errorMsg.includes('not exist') || errorMsg.includes('program not found')) {
-                toast.error('Transaksi gagal: Smart Contract belum di-deploy atau Vault Creator belum diinisialisasi.');
+                toast.error(t('donationFailed'));
             } else if (errorMsg.includes('insufficient')) {
-                toast.error('Transaksi gagal: Saldo SOL kamu tidak cukup untuk donasi.');
+                toast.error(t('donationFailed'));
             } else {
-                toast.error('Transaksi gagal atau ditolak dompet. Coba lagi atau lihat console untuk detail.');
+                toast.error(t('donationFailed'));
             }
         } finally {
             setLoading(false);
@@ -184,20 +188,20 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
             <header className="dashboard-header pemberi-header glass">
                 <div className="header-left">
                     <div className="logo"><span className="text-gradient">Sokong</span></div>
-                    <span className="user-role"><FontAwesomeIcon icon={faGift} /> Supporter</span>
+                    <span className="user-role"><FontAwesomeIcon icon={faGift} /> {t('supporter')}</span>
                 </div>
                 <div className="header-right">
                     <span className="user-name"><FontAwesomeIcon icon={faUser} /> @{user?.username}</span>
                     <SokongWalletButton style={{ background: 'var(--sol-green)', color: '#000' }} />
-                    <button onClick={onSwitchRole} className="btn-switch-role">Switch Role</button>
-                    <button onClick={handleLogout} className="btn-logout">Logout</button>
+                    <button onClick={onSwitchRole} className="btn-switch-role">{t('switchRole')}</button>
+                    <button onClick={handleLogout} className="btn-logout">{t('logout')}</button>
                 </div>
             </header>
 
             <main className="dashboard-content">
                 <div className="search-hero">
                     <h1 className="search-title">
-                        Support <span className="text-gradient">Creator</span> Favoritmu
+                        {t('supporter')} <span className="text-gradient">{t('creator')}</span> Favoritmu
                     </h1>
                     <p className="search-subtitle">Kirim donasi SOL langsung ke wallet creator pilihanmu secara on-chain</p>
 
@@ -206,7 +210,7 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                         <input
                             type="text"
                             className="search-bar"
-                            placeholder="Search creator username or campaign title..."
+                            placeholder={t('search')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onFocus={() => setSearchFocused(true)}
@@ -220,9 +224,9 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                 </div>
 
                 <div className="dp-tabs" style={{ padding: '0 2rem', marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                    <button onClick={() => setActiveTab('explore')} style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'explore' ? '2px solid var(--sol-green)' : '2px solid transparent', color: activeTab === 'explore' ? '#fff' : 'rgba(255,255,255,0.45)', padding: '0.75rem 1.25rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}><FontAwesomeIcon icon={faMagnifyingGlass} /> Explore</button>
-                    <button onClick={() => setActiveTab('gallery')} style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'gallery' ? '2px solid var(--sol-green)' : '2px solid transparent', color: activeTab === 'gallery' ? '#fff' : 'rgba(255,255,255,0.45)', padding: '0.75rem 1.25rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}><FontAwesomeIcon icon={faStar} /> Time Capsule Gallery</button>
-                    <button onClick={() => setActiveTab('profile')} style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'profile' ? '2px solid var(--sol-green)' : '2px solid transparent', color: activeTab === 'profile' ? '#fff' : 'rgba(255,255,255,0.45)', padding: '0.75rem 1.25rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}>⚙️ Profil Saya</button>
+                    <button onClick={() => setActiveTab('explore')} style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'explore' ? '2px solid var(--sol-green)' : '2px solid transparent', color: activeTab === 'explore' ? '#fff' : 'rgba(255,255,255,0.45)', padding: '0.75rem 1.25rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}><FontAwesomeIcon icon={faMagnifyingGlass} /> {t('explore')}</button>
+                    <button onClick={() => setActiveTab('gallery')} style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'gallery' ? '2px solid var(--sol-green)' : '2px solid transparent', color: activeTab === 'gallery' ? '#fff' : 'rgba(255,255,255,0.45)', padding: '0.75rem 1.25rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}><FontAwesomeIcon icon={faStar} /> {t('timeCapsuleGallery')}</button>
+                    <button onClick={() => setActiveTab('profile')} style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'profile' ? '2px solid var(--sol-green)' : '2px solid transparent', color: activeTab === 'profile' ? '#fff' : 'rgba(255,255,255,0.45)', padding: '0.75rem 1.25rem', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}>⚙️ {t('profile')}</button>
                 </div>
 
                 {activeTab === 'explore' && (
@@ -230,7 +234,7 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                         <section className="campaigns-section">
                             <div className="section-header">
                                 <h2>
-                                    {searchQuery ? `Hasil pencarian "${searchQuery}"` : 'Top Supported Campaigns'}
+                                    {searchQuery ? `${t('search')} "${searchQuery}"` : t('explore')}
                                 </h2>
                             </div>
 
@@ -276,7 +280,7 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                         <aside className="donation-panel">
                             {selectedCampaign ? (
                                 <div className="donation-card glass">
-                                    <h3>Kirim Donasi ke</h3>
+                                    <h3>{t('donate')}</h3>
                                     <div className="selected-campaign-info">
                                         <div className="streamer-avatar-lg"><FontAwesomeIcon icon={selectedCampaign.avatarIcon} /></div>
                                         <div>
@@ -288,14 +292,14 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
 
                                     {!connected && (
                                         <div className="wallet-warning">
-                                            Hubungkan wallet dulu untuk donasi
+                                            {t('connectWalletFirst')}
                                             <SokongWalletButton style={{ width: '100%', marginTop: '8px', justifyContent: 'center', background: 'var(--sol-green)', color: '#000' }} />
                                         </div>
                                     )}
 
                                     <form onSubmit={handleDonate}>
                                         <div className="form-group">
-                                            <label>Jumlah Donasi (SOL)</label>
+                                            <label>{t('donationAmount')}</label>
                                             <div className="quick-amounts">
                                                 {['0.1', '0.5', '1', '2'].map(amt => (
                                                     <button
@@ -320,7 +324,7 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                                         </div>
 
                                         <div className="form-group">
-                                            <label><FontAwesomeIcon icon={faComment} /> Pesan Time Capsule</label>
+                                            <label><FontAwesomeIcon icon={faComment} /> {t('message')}</label>
                                             <textarea
                                                 placeholder="Tulis pesan semangatmu yang akan disimpan di blockchain..."
                                                 rows="3"
@@ -332,16 +336,16 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                                         </div>
 
                                         <button type="submit" className="btn-primary donate-btn" disabled={!connected || loading}>
-                                            {loading ? 'Mengirim...' : <><FontAwesomeIcon icon={faRocket} /> Kirim {donationAmount ? `${donationAmount} SOL` : 'Donasi'}</>}
+                                            {loading ? `${t('processing')}...` : <><FontAwesomeIcon icon={faRocket} /> {t('donateNow')}</>}
                                         </button>
                                     </form>
 
-                                    <button className="btn-cancel" onClick={() => setSelectedCampaign(null)}>Batal</button>
+                                    <button className="btn-cancel" onClick={() => setSelectedCampaign(null)}>{t('cancel')}</button>
                                 </div>
                             ) : (
                                 <div className="donation-card glass empty">
                                     <div className="empty-icon"><FontAwesomeIcon icon={faHandPointLeft} /></div>
-                                    <p>Pilih campaign untuk mulai berdonasi</p>
+                                    <p>{t('selectCampaign')}</p>
                                 </div>
                             )}
                         </aside>
@@ -363,7 +367,7 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
 
                     return (
                         <div className="dashboard-layout" style={{ display: 'block', maxWidth: '1000px', margin: '0 auto' }}>
-                            <div className="section-header"><h2><FontAwesomeIcon icon={faStar} /> Galeri Time Capsule Saya</h2></div>
+                            <div className="section-header"><h2><FontAwesomeIcon icon={faStar} /> {t('timeCapsuleGallery')}</h2></div>
                             {myGallery.length === 0 ? (
                                 <div className="empty-state glass">
                                     <div className="empty-icon"><FontAwesomeIcon icon={faBoxOpen} /></div>
@@ -401,19 +405,19 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
 
                 {activeTab === 'profile' && (
                     <div className="dashboard-layout" style={{ display: 'block', maxWidth: '800px', margin: '0 auto' }}>
-                        <div className="section-header"><h2>Profil Saya</h2></div>
+                        <div className="section-header"><h2>{t('profile')}</h2></div>
                         <div className="donation-card glass" style={{ padding: '2rem' }}>
                             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                                <label>Username (Unik) <span style={{ color: '#ff4757' }}>*</span></label>
+                                <label>{t('username')} <span style={{ color: '#ff4757' }}>*</span></label>
                                 {isEditingProfile ? (
                                     <input type="text" name="username" value={profileData.username} onChange={handleProfileInputChange} placeholder="username_unik" required />
                                 ) : (<p style={{ padding: '0.6rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)', margin: 0, fontSize: '1.1rem' }}>@{profileData.username}</p>)}
                             </div>
 
                             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                                <label>Nama / Display Name</label>
+                                <label>{t('displayName')}</label>
                                 {isEditingProfile ? (
-                                    <input type="text" name="name" value={profileData.name} onChange={handleProfileInputChange} placeholder="Nama tayangan kamu..." />
+                                    <input type="text" name="name" value={profileData.name} onChange={handleProfileInputChange} placeholder={t('displayName')} />
                                 ) : (<p style={{ padding: '0.6rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)', margin: 0, fontSize: '1.1rem' }}>{profileData.name || '-'}</p>)}
                             </div>
 
@@ -425,11 +429,11 @@ export const DashboardPemberi = ({ onSwitchRole }) => {
                             <div style={{ display: 'flex', gap: '1rem' }}>
                                 {isEditingProfile ? (
                                     <>
-                                        <button className="btn-primary" onClick={handleSaveProfile} style={{ flex: 1 }}><FontAwesomeIcon icon={faCheck} /> Simpan</button>
-                                        <button className="btn-cancel" onClick={() => setIsEditingProfile(false)} style={{ flex: 1, marginTop: 0 }}><FontAwesomeIcon icon={faTimes} /> Batal</button>
+                                        <button className="btn-primary" onClick={handleSaveProfile} style={{ flex: 1 }}><FontAwesomeIcon icon={faCheck} /> {t('save')}</button>
+                                        <button className="btn-cancel" onClick={() => setIsEditingProfile(false)} style={{ flex: 1, marginTop: 0 }}><FontAwesomeIcon icon={faTimes} /> {t('cancel')}</button>
                                     </>
                                 ) : (
-                                    <button className="btn-primary" onClick={() => setIsEditingProfile(true)} style={{ flex: 1 }}><FontAwesomeIcon icon={faPen} /> Edit Profil</button>
+                                    <button className="btn-primary" onClick={() => setIsEditingProfile(true)} style={{ flex: 1 }}><FontAwesomeIcon icon={faPen} /> {t('editProfile')}</button>
                                 )}
                             </div>
                         </div>

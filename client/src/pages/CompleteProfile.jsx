@@ -47,11 +47,11 @@ export const CompleteProfile = ({ frozenKey }) => {
 
                 <form onSubmit={handleSubmit} className="auth-form" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     <div className="form-group">
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#ccc' }}>Username (Unik) <span style={{color: '#ff4757'}}>*</span></label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#ccc' }}>Username <span style={{color: '#ff4757'}}>*</span></label>
                         <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Misal: satoshi_id" required style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} />
                     </div>
                     <div className="form-group">
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#ccc' }}>Nama Tayangan / Display Name <span style={{color: '#ff4757'}}>*</span></label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#ccc' }}>Display Name <span style={{color: '#ff4757'}}>*</span></label>
                         <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nama yang akan dilihat orang lain" required style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} />
                     </div>
                     <div className="form-group">
